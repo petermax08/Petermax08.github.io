@@ -55,6 +55,13 @@
     background: rgba(0,0,0,0.06); color: #1d1d1f; transition: transform .3s, background .3s;
   }
   #themeBtn:hover { transform: scale(1.12); }
+  #soundBtn {
+    position: fixed; top: 8px; right: 60px; width: 32px; height: 32px; border-radius: 50%;
+    border: none; cursor: pointer; font-size: 15px; z-index: 15;
+    background: rgba(0,0,0,0.06); color: #1d1d1f; transition: transform .3s, background .3s;
+  }
+  #soundBtn:hover { transform: scale(1.12); }
+  html.night #soundBtn { background: rgba(60,60,67,0.7); color: #f5f5f7; }
   html.night body { background: #000; color: #f5f5f7; }
   html.night nav { background: rgba(0,0,0,0.72); }
   html.night nav a { color: #f5f5f7; }
@@ -121,6 +128,7 @@
 </div>
 
 <button id="themeBtn" title="Donker / licht">&#9790;</button>
+<button id="soundBtn" title="Geluid aan / uit">&#128266;</button>
 
 <nav>
   <a href="index.html">Home</a>
@@ -203,6 +211,47 @@
       const n = !root.classList.contains('night'); apply(n);
       try { localStorage.setItem('theme', n ? 'night' : 'light'); } catch (e) {}
     });
+  })();
+
+  // ---------------- Geluid (Web Audio, geen bestanden nodig) ----------------
+  const SFX = (function () {
+    let ac = null, muted = false;
+    try { muted = localStorage.getItem('sfxMuted') === '1'; } catch (e) {}
+    const btn = document.getElementById('soundBtn');
+    function paint() { btn.textContent = muted ? '\uD83D\uDD07' : '\uD83D\uDD0A'; }
+    paint();
+    btn.addEventListener('click', () => {
+      muted = !muted; paint();
+      try { localStorage.setItem('sfxMuted', muted ? '1' : '0'); } catch (e) {}
+      if (!muted) tone(660, 0.08, 'sine', 0.12);
+    });
+    function ctxOk() {
+      if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return false; } }
+      if (ac.state === 'suspended') ac.resume();
+      return true;
+    }
+    function tone(freq, dur, type, vol, delay, slideTo) {
+      if (muted || !ctxOk()) return;
+      const t0 = ac.currentTime + (delay || 0);
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = type || 'sine';
+      o.frequency.setValueAtTime(freq, t0);
+      if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(vol || 0.15, t0 + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.connect(g); g.connect(ac.destination);
+      o.start(t0); o.stop(t0 + dur + 0.02);
+    }
+    return {
+      unlock: ctxOk,
+      fish: function () { tone(880, 0.12, 'sine', 0.16); tone(1320, 0.14, 'sine', 0.1, 0.05); },
+      gold: function () { [660, 880, 1100, 1320, 1760].forEach((f, i) => tone(f, 0.16, 'triangle', 0.15, i * 0.07)); },
+      bomb: function () { tone(160, 0.35, 'sawtooth', 0.2, 0, 40); tone(90, 0.4, 'square', 0.12, 0, 35); },
+      miss: function () { tone(300, 0.18, 'sine', 0.1, 0, 180); },
+      over: function () { [523, 392, 294].forEach((f, i) => tone(f, 0.28, 'triangle', 0.16, i * 0.2)); },
+      pop: function () { tone(520, 0.09, 'sine', 0.16, 0, 900); }
+    };
   })();
 
   // ---------------- Het spel ----------------
@@ -349,6 +398,7 @@
     function end() {
       running = false;
       if (score > best) { best = score; bestEl.textContent = best; try { localStorage.setItem('catBest', best); } catch (e) {} }
+      SFX.over();
       ovTitle.textContent = 'Game over';
       ovText.innerHTML = 'Je score: <b>' + score + '</b><br>Record: <b>' + best + '</b>';
       startBtn.textContent = 'Opnieuw';
@@ -373,14 +423,14 @@
           it.y += it.vy * dt; it.ph += dt * 6;
           const caught = Math.abs(it.x - cat.x) < cat.w / 2 + 6 && it.y > cat.y - 40 && it.y < cat.y + 20;
           if (caught) {
-            if (it.bomb) { lives--; pop(it.x, it.y, '#c8321e'); }
-            else if (it.gold) { score += 5; pop(it.x, it.y, '#ffc928'); pop(it.x, it.y, '#fff2a8'); }
-            else { score++; pop(it.x, it.y, it.color); }
+            if (it.bomb) { lives--; pop(it.x, it.y, '#c8321e'); SFX.bomb(); }
+            else if (it.gold) { score += 5; pop(it.x, it.y, '#ffc928'); pop(it.x, it.y, '#fff2a8'); SFX.gold(); }
+            else { score++; pop(it.x, it.y, it.color); SFX.fish(); }
             scoreEl.textContent = score; livesEl.textContent = lives;
             items.splice(i, 1);
             if (lives <= 0) { end(); break; }
           } else if (it.y > H - 30) {
-            if (!it.bomb && !it.gold) { lives--; livesEl.textContent = lives; pop(it.x, H - 34, '#ffffff'); }
+            if (!it.bomb && !it.gold) { lives--; livesEl.textContent = lives; pop(it.x, H - 34, '#ffffff'); SFX.miss(); }
             items.splice(i, 1);
             if (lives <= 0) { end(); break; }
           }
@@ -416,7 +466,7 @@
     });
     window.addEventListener('keyup', (e) => { const k = e.key.length === 1 ? e.key.toLowerCase() : e.key; keys[k] = false; });
 
-    startBtn.addEventListener('click', () => { reset(); running = true; overlay.classList.add('hide'); });
+    startBtn.addEventListener('click', () => { SFX.unlock(); reset(); running = true; overlay.classList.add('hide'); });
 
     reset(); running = false; last = performance.now();
     requestAnimationFrame(loop);
@@ -459,6 +509,7 @@
     function end() {
       running = false;
       if (score > best) { best = score; bestEl.textContent = best; try { localStorage.setItem('snakeBest', best); } catch (e) {} }
+      SFX.over();
       title.textContent = 'Game over';
       text.innerHTML = 'Je score: <b>' + score + '</b><br>Record: <b>' + best + '</b>';
       startBtn.textContent = 'Opnieuw';
@@ -473,6 +524,7 @@
       if (h.x === food.x && h.y === food.y) {
         score++; scoreEl.textContent = score;
         burst((h.x + 0.5) * S, (h.y + 0.5) * S, food.hue);
+        SFX.pop();
         placeFood();
       } else { snake.pop(); }
     }
@@ -561,7 +613,7 @@
       e.preventDefault();
     }, { passive: false });
 
-    startBtn.addEventListener('click', () => { reset(); running = true; overlay.classList.add('hide'); });
+    startBtn.addEventListener('click', () => { SFX.unlock(); reset(); running = true; overlay.classList.add('hide'); });
 
     reset(); running = false;
     requestAnimationFrame(loop);
