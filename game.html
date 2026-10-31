@@ -36,6 +36,18 @@
   .btn { padding: 14px 36px; border: none; border-radius: 980px; background: #0071e3; color: #fff; font-size: 18px; cursor: pointer; transition: transform .2s, background .3s; }
   .btn:hover { background: #0077ed; transform: scale(1.04); }
   .hint { color: #86868b; font-size: 14px; margin-top: 14px; text-align: center; }
+  h2.gtitle { font-size: clamp(30px, 6vw, 52px); font-weight: 700; letter-spacing: -0.03em; text-align: center; margin-top: 90px;
+              background: linear-gradient(90deg, #8e5cff, #2fa8ff, #2fe0b0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  #snakeStage { position: relative; width: min(480px, 100%); }
+  #snake { width: 100%; height: auto; display: block; border-radius: 28px; touch-action: none;
+           box-shadow: 0 20px 60px rgba(80,60,200,0.35); background: #0d0d1f; }
+  #snakeOverlay {
+    position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center;
+    border-radius: 28px; background: rgba(13,13,31,0.72); backdrop-filter: blur(12px); text-align: center; padding: 24px; color: #f5f5f7;
+  }
+  #snakeOverlay.hide { display: none; }
+  #snakeOverlay h2 { font-size: 32px; margin-bottom: 8px; letter-spacing: -0.02em; }
+  #snakeOverlay p { color: #c7c7d1; margin-bottom: 20px; line-height: 1.5; }
   footer { padding: 30px; text-align: center; color: #86868b; font-size: 13px; }
   #themeBtn {
     position: fixed; top: 8px; right: 20px; width: 32px; height: 32px; border-radius: 50%;
@@ -131,11 +143,27 @@
     <canvas id="c" width="560" height="720"></canvas>
     <div id="overlay">
       <h2 id="ovTitle">Klaar om te vangen?</h2>
-      <p id="ovText">Beweeg de muis, sleep met je vinger of gebruik de pijltjestoetsen.<br>Vang de vissen. Een gevangen vis telt, een gemiste vis kost een leven. Pas op voor de rode bom!</p>
+      <p id="ovText">Beweeg de muis, sleep met je vinger of gebruik de pijltjestoetsen.<br>Vang de vissen. Een gevangen vis telt, een gemiste vis kost een leven. De gouden vis geeft 5 punten. Pas op voor de rode bom!</p>
       <button class="btn" id="startBtn">Start</button>
     </div>
   </div>
   <p class="hint">Pijltjestoetsen of A / D, muis of vinger</p>
+
+  <h2 class="gtitle">Slang</h2>
+  <p class="sub">Eet de gloeiende bolletjes en word zo lang mogelijk.</p>
+  <div class="hud">
+    <div class="pill">Score: <span id="sScore">0</span></div>
+    <div class="pill">Record: <span id="sBest">0</span></div>
+  </div>
+  <div id="snakeStage">
+    <canvas id="snake" width="480" height="480"></canvas>
+    <div id="snakeOverlay">
+      <h2 id="sTitle">Klaar voor de slang?</h2>
+      <p id="sText">Pijltjestoetsen of W A S D om te sturen. Op je telefoon veeg je over het scherm.<br>Raak de rand of jezelf niet aan!</p>
+      <button class="btn" id="sStart">Start</button>
+    </div>
+  </div>
+  <p class="hint">Pijltjestoetsen of W A S D, of veeg op je telefoon</p>
 </main>
 
 <footer>&copy; 2026 Peter. Alle rechten voorbehouden.</footer>
@@ -197,12 +225,17 @@
       scoreEl.textContent = 0; livesEl.textContent = 3;
     }
 
+    const FISH_COLORS = ['#ff9a3c', '#4aa8ff', '#ffd23c', '#ff6fa8', '#5fd1a0'];
+
     function spawn() {
-      const bomb = Math.random() < 0.16;
+      const r = Math.random();
+      const bomb = r < 0.14;
+      const gold = !bomb && r < 0.14 + 0.07;
       items.push({
-        x: 30 + Math.random() * (W - 60), y: -30,
-        vy: 150 + Math.random() * 90 + speedBoost,
-        bomb: bomb, ph: Math.random() * 6.28
+        x: 40 + Math.random() * (W - 80), y: -40,
+        vy: (gold ? 260 : 150 + Math.random() * 90) + speedBoost,
+        bomb: bomb, gold: gold, ph: Math.random() * 6.28,
+        color: FISH_COLORS[Math.floor(Math.random() * FISH_COLORS.length)]
       });
     }
 
@@ -212,9 +245,25 @@
       }
     }
 
-    function drawFish(x, y, ph) {
+    function drawBigGoldFish(x, y, ph) {
+      ctx.save(); ctx.translate(x, y); ctx.rotate(Math.sin(ph) * 0.2);
+      ctx.shadowColor = 'rgba(255,200,40,0.9)'; ctx.shadowBlur = 24;
+      ctx.fillStyle = '#ffc928';
+      ctx.beginPath(); ctx.ellipse(0, 0, 40, 22, 0, 0, 6.283); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(32, 0); ctx.lineTo(60, -20); ctx.lineTo(60, 20); ctx.closePath(); ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#ffe58a';
+      ctx.beginPath(); ctx.ellipse(-4, 6, 26, 9, 0, 0, 6.283); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(-20, -5, 6, 0, 6.283); ctx.fill();
+      ctx.fillStyle = '#222'; ctx.beginPath(); ctx.arc(-21, -5, 3, 0, 6.283); ctx.fill();
+      ctx.fillStyle = '#b8860b'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('+5', 8, -2);
+      ctx.restore();
+    }
+
+    function drawFish(x, y, ph, color) {
       ctx.save(); ctx.translate(x, y); ctx.rotate(Math.sin(ph) * 0.25);
-      ctx.fillStyle = '#ff9a3c';
+      ctx.fillStyle = color || '#ff9a3c';
       ctx.beginPath(); ctx.ellipse(0, 0, 22, 12, 0, 0, 6.283); ctx.fill();
       ctx.beginPath(); ctx.moveTo(18, 0); ctx.lineTo(34, -11); ctx.lineTo(34, 11); ctx.closePath(); ctx.fill();
       ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(-11, -3, 4, 0, 6.283); ctx.fill();
@@ -258,7 +307,7 @@
       // hoofd: de echte foto in een cirkel, anders het getekende hoofd
       if (catPhotoOk && catPhoto.naturalWidth > 0) {
         const R = 38, side = Math.min(catPhoto.naturalWidth, catPhoto.naturalHeight);
-        const sx = (catPhoto.naturalWidth - side) / 2, sy = (catPhoto.naturalHeight - side) / 2;
+        const sx = (catPhoto.naturalWidth - side) / 2, sy = Math.max(0, (catPhoto.naturalHeight - side) / 2 - side * 0.12);
         ctx.save();
         ctx.beginPath(); ctx.arc(0, -20, R, 0, 6.283); ctx.clip();
         ctx.drawImage(catPhoto, sx, sy, side, side, -R, -20 - R, R * 2, R * 2);
@@ -325,18 +374,23 @@
           const caught = Math.abs(it.x - cat.x) < cat.w / 2 + 6 && it.y > cat.y - 40 && it.y < cat.y + 20;
           if (caught) {
             if (it.bomb) { lives--; pop(it.x, it.y, '#c8321e'); }
-            else { score++; pop(it.x, it.y, '#ff9a3c'); }
+            else if (it.gold) { score += 5; pop(it.x, it.y, '#ffc928'); pop(it.x, it.y, '#fff2a8'); }
+            else { score++; pop(it.x, it.y, it.color); }
             scoreEl.textContent = score; livesEl.textContent = lives;
             items.splice(i, 1);
             if (lives <= 0) { end(); break; }
           } else if (it.y > H - 30) {
-            if (!it.bomb) { lives--; livesEl.textContent = lives; pop(it.x, H - 34, '#ffffff'); }
+            if (!it.bomb && !it.gold) { lives--; livesEl.textContent = lives; pop(it.x, H - 34, '#ffffff'); }
             items.splice(i, 1);
             if (lives <= 0) { end(); break; }
           }
         }
       }
-      for (const it of items) { it.bomb ? drawBomb(it.x, it.y) : drawFish(it.x, it.y, it.ph); }
+      for (const it of items) {
+        if (it.bomb) drawBomb(it.x, it.y);
+        else if (it.gold) drawBigGoldFish(it.x, it.y, it.ph);
+        else drawFish(it.x, it.y, it.ph, it.color);
+      }
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i]; p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 600 * dt;
         if (p.life <= 0) { particles.splice(i, 1); continue; }
@@ -358,13 +412,158 @@
     window.addEventListener('keydown', (e) => {
       const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
       keys[k] = true;
-      if (e.key.indexOf('Arrow') === 0) e.preventDefault();
+      if (running && e.key.indexOf('Arrow') === 0) e.preventDefault();
     });
     window.addEventListener('keyup', (e) => { const k = e.key.length === 1 ? e.key.toLowerCase() : e.key; keys[k] = false; });
 
     startBtn.addEventListener('click', () => { reset(); running = true; overlay.classList.add('hide'); });
 
     reset(); running = false; last = performance.now();
+    requestAnimationFrame(loop);
+  })();
+
+  // ---------------- Slang ----------------
+  (function () {
+    const cv = document.getElementById('snake'), ctx = cv.getContext('2d');
+    const N = 20, S = cv.width / N;
+    const scoreEl = document.getElementById('sScore'), bestEl = document.getElementById('sBest');
+    const overlay = document.getElementById('snakeOverlay'), title = document.getElementById('sTitle'), text = document.getElementById('sText'), startBtn = document.getElementById('sStart');
+
+    let best = 0;
+    try { best = parseInt(localStorage.getItem('snakeBest') || '0', 10) || 0; } catch (e) {}
+    bestEl.textContent = best;
+
+    let snake, dir, nextDir, food, score, running, acc, parts, hue0;
+
+    function reset() {
+      snake = [{ x: 8, y: 10 }, { x: 7, y: 10 }, { x: 6, y: 10 }];
+      dir = { x: 1, y: 0 }; nextDir = dir; score = 0; acc = 0; parts = []; hue0 = 0;
+      scoreEl.textContent = 0;
+      placeFood();
+    }
+
+    function placeFood() {
+      while (true) {
+        const f = { x: Math.floor(Math.random() * N), y: Math.floor(Math.random() * N), hue: Math.floor(Math.random() * 360) };
+        if (!snake.some(s => s.x === f.x && s.y === f.y)) { food = f; return; }
+      }
+    }
+
+    function burst(x, y, hue) {
+      for (let i = 0; i < 16; i++) {
+        const a = Math.random() * 6.283, v = 60 + Math.random() * 160;
+        parts.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0.7, h: (hue + Math.random() * 60) % 360 });
+      }
+    }
+
+    function end() {
+      running = false;
+      if (score > best) { best = score; bestEl.textContent = best; try { localStorage.setItem('snakeBest', best); } catch (e) {} }
+      title.textContent = 'Game over';
+      text.innerHTML = 'Je score: <b>' + score + '</b><br>Record: <b>' + best + '</b>';
+      startBtn.textContent = 'Opnieuw';
+      overlay.classList.remove('hide');
+    }
+
+    function step() {
+      dir = nextDir;
+      const h = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+      if (h.x < 0 || h.y < 0 || h.x >= N || h.y >= N || snake.some(s => s.x === h.x && s.y === h.y)) { end(); return; }
+      snake.unshift(h);
+      if (h.x === food.x && h.y === food.y) {
+        score++; scoreEl.textContent = score;
+        burst((h.x + 0.5) * S, (h.y + 0.5) * S, food.hue);
+        placeFood();
+      } else { snake.pop(); }
+    }
+
+    function draw(now, dt) {
+      // achtergrond: diep verloop met een zacht raster
+      const g = ctx.createLinearGradient(0, 0, cv.width, cv.height);
+      g.addColorStop(0, '#120c2e'); g.addColorStop(0.5, '#0d1b3a'); g.addColorStop(1, '#0a2a33');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, cv.width, cv.height);
+      ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 1;
+      for (let i = 1; i < N; i++) {
+        ctx.beginPath(); ctx.moveTo(i * S, 0); ctx.lineTo(i * S, cv.height); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, i * S); ctx.lineTo(cv.width, i * S); ctx.stroke();
+      }
+      // eten: een kloppend, gloeiend bolletje
+      const pulse = 1 + Math.sin(now / 160) * 0.14;
+      ctx.save();
+      ctx.shadowColor = 'hsl(' + food.hue + ',100%,60%)'; ctx.shadowBlur = 22;
+      ctx.fillStyle = 'hsl(' + food.hue + ',95%,62%)';
+      ctx.beginPath(); ctx.arc((food.x + 0.5) * S, (food.y + 0.5) * S, S * 0.34 * pulse, 0, 6.283); ctx.fill();
+      ctx.restore();
+      // slang: kleurverloop van paars via blauw naar turquoise
+      hue0 = (hue0 + dt * 40) % 360;
+      for (let i = snake.length - 1; i >= 0; i--) {
+        const s = snake[i], t = i / Math.max(snake.length - 1, 1);
+        const hue = 270 - t * 100;
+        const r = S * (0.46 - t * 0.12);
+        ctx.save();
+        ctx.shadowColor = 'hsl(' + hue + ',100%,60%)'; ctx.shadowBlur = i === 0 ? 20 : 10;
+        ctx.fillStyle = 'hsl(' + hue + ',90%,' + (i === 0 ? 66 : 58) + '%)';
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(s.x * S + S / 2 - r, s.y * S + S / 2 - r, r * 2, r * 2, r * 0.7);
+        else ctx.rect(s.x * S + S / 2 - r, s.y * S + S / 2 - r, r * 2, r * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+      // ogen op de kop
+      const hd = snake[0], cx = (hd.x + 0.5) * S, cy = (hd.y + 0.5) * S;
+      const px = -dir.y, py = dir.x;
+      for (const sgn of [-1, 1]) {
+        const ex = cx + dir.x * S * 0.14 + px * sgn * S * 0.17, ey = cy + dir.y * S * 0.14 + py * sgn * S * 0.17;
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(ex, ey, S * 0.1, 0, 6.283); ctx.fill();
+        ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(ex + dir.x * S * 0.03, ey + dir.y * S * 0.03, S * 0.05, 0, 6.283); ctx.fill();
+      }
+      // deeltjes
+      for (let i = parts.length - 1; i >= 0; i--) {
+        const p = parts[i]; p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt;
+        if (p.life <= 0) { parts.splice(i, 1); continue; }
+        ctx.globalAlpha = Math.max(p.life / 0.7, 0);
+        ctx.fillStyle = 'hsl(' + p.h + ',100%,65%)';
+        ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, 6.283); ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    let last = performance.now();
+    function loop(now) {
+      const dt = Math.min((now - last) / 1000, 0.05); last = now;
+      if (running) {
+        acc += dt;
+        const speed = Math.max(0.07, 0.15 - score * 0.003);
+        while (acc >= speed && running) { acc -= speed; step(); }
+      }
+      draw(now, dt);
+      requestAnimationFrame(loop);
+    }
+
+    function turn(x, y) {
+      if (x === -dir.x && y === -dir.y) return;
+      nextDir = { x: x, y: y };
+    }
+    window.addEventListener('keydown', (e) => {
+      const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      if (!running) return;
+      if (k === 'ArrowUp' || k === 'w') { turn(0, -1); e.preventDefault(); }
+      else if (k === 'ArrowDown' || k === 's') { turn(0, 1); e.preventDefault(); }
+      else if (k === 'ArrowLeft' || k === 'a') { turn(-1, 0); e.preventDefault(); }
+      else if (k === 'ArrowRight' || k === 'd') { turn(1, 0); e.preventDefault(); }
+    });
+    let tx = 0, ty = 0;
+    cv.addEventListener('touchstart', (e) => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; e.preventDefault(); }, { passive: false });
+    cv.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+      if (Math.max(Math.abs(dx), Math.abs(dy)) < 20) return;
+      if (Math.abs(dx) > Math.abs(dy)) turn(dx > 0 ? 1 : -1, 0); else turn(0, dy > 0 ? 1 : -1);
+      e.preventDefault();
+    }, { passive: false });
+
+    startBtn.addEventListener('click', () => { reset(); running = true; overlay.classList.add('hide'); });
+
+    reset(); running = false;
     requestAnimationFrame(loop);
   })();
 </script>
