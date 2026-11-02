@@ -39,6 +39,13 @@
   .proj p { color: #6e6e73; line-height: 1.55; margin-bottom: 16px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip { padding: 6px 14px; border-radius: 980px; background: #f2f2f4; font-size: 14px; color: #424245; }
+  .video-section { max-width: 900px; margin: 0 auto; padding: 40px 24px; text-align: center; }
+  .video-section h2 { font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.02em; margin-bottom: 24px; }
+  .video-wrap { position: relative; aspect-ratio: 16 / 9; border-radius: 28px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.08); background: #000; }
+  .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .video-text { color: #6e6e73; line-height: 1.6; font-size: 18px; margin-top: 24px; text-align: left; }
+  html.night .video-wrap { box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+  html.night .video-text { color: #a1a1a6; }
   .cvwrap { text-align: center; padding: 40px 24px 100px; }
   .btn { display: inline-block; padding: 16px 40px; border-radius: 980px; background: #0071e3; color: #fff; text-decoration: none; font-size: 18px; transition: background .3s; }
   .btn:hover { background: #0077ed; }
@@ -178,6 +185,19 @@
     <div class="chips"><span class="chip">Game design</span><span class="chip">3D-printen</span></div>
   </div>
 </div>
+
+<!-- NIEUW: video met uitleg -->
+<section class="video-section reveal">
+  <h2>Mijn huidige project</h2>
+  <div class="video-wrap">
+    <iframe src="https://www.youtube-nocookie.com/embed/LdK76hD-1iY"
+            title="Mijn huidige project"
+            loading="lazy"
+            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+            allowfullscreen></iframe>
+  </div>
+  <p class="video-text">Op dit moment werk ik aan een game over de plek waar ik woon: Delfzijl, een kleine havenstad ten noorden van Groningen. In de video zie je hoe het spel er nu uitziet.</p>
+</section>
 
 <div class="cvwrap reveal">
   <a class="btn" href="cv.pdf" download>Download mijn cv</a>
