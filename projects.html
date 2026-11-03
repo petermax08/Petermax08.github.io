@@ -39,7 +39,7 @@
   .proj p { color: #6e6e73; line-height: 1.55; margin-bottom: 16px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip { padding: 6px 14px; border-radius: 980px; background: #f2f2f4; font-size: 14px; color: #424245; }
-  .video-section { max-width: 900px; margin: 0 auto; padding: 40px 24px; text-align: center; }
+  .video-section { max-width: 900px; margin: 0 auto; padding: 20px 24px 20px; text-align: center; }
   .video-section h2 { font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.02em; margin-bottom: 24px; }
   .video-wrap { position: relative; aspect-ratio: 16 / 9; border-radius: 28px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.08); background: #000; }
   .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
@@ -147,13 +147,33 @@
   <p class="sub reveal">Wat ik heb gebouwd en geleerd</p>
 </header>
 
+<!-- Video met uitleg, nu boven de cijfers -->
+<section class="video-section reveal">
+  <h2>Mijn huidige project</h2>
+  <div class="video-wrap">
+    <iframe src="https://www.youtube-nocookie.com/embed/LdK76hD-1iY"
+            title="Mijn huidige project"
+            loading="lazy"
+            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+            allowfullscreen></iframe>
+  </div>
+  <p class="video-text">Op dit moment werk ik aan een game over de plek waar ik woon: Delfzijl, een kleine havenstad ten noorden van Groningen. In de video zie je hoe het spel er nu uitziet.</p>
+</section>
+
 <div class="stats">
   <div class="stat reveal"><b data-to="18">0</b><span>maanden stage-ervaring</span></div>
   <div class="stat reveal"><b data-to="3">0</b><span>verschillende stageplaatsen</span></div>
-  <div class="stat reveal"><b data-to="3">0</b><span>kerntechnologieën: Cisco, FortiGate, Windows Server</span></div>
+  <div class="stat reveal"><b data-to="3">0</b><span>kerntechnologie&euml;n: Cisco, FortiGate, Windows Server</span></div>
 </div>
 
 <div class="projects">
+  <!-- NIEUW: offline AI -->
+  <div class="proj reveal">
+    <span class="badge">Persoonlijk project</span>
+    <h3>Offline AI</h3>
+    <p>Mijn eigen AI draaiend op eigen hardware, zonder internet. Zo blijven alle gegevens bij mij en werkt alles ook offline. Zelf opgezet en ingesteld.</p>
+    <div class="chips"><span class="chip">AI</span><span class="chip">Zelf hosten</span><span class="chip">Privacy</span></div>
+  </div>
   <div class="proj reveal">
     <span class="badge">School, lab en thuis</span>
     <h3>Bedrijfsnetwerk (simulatie)</h3>
@@ -185,19 +205,6 @@
     <div class="chips"><span class="chip">Game design</span><span class="chip">3D-printen</span></div>
   </div>
 </div>
-
-<!-- NIEUW: video met uitleg -->
-<section class="video-section reveal">
-  <h2>Mijn huidige project</h2>
-  <div class="video-wrap">
-    <iframe src="https://www.youtube-nocookie.com/embed/LdK76hD-1iY"
-            title="Mijn huidige project"
-            loading="lazy"
-            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-            allowfullscreen></iframe>
-  </div>
-  <p class="video-text">Op dit moment werk ik aan een game over de plek waar ik woon: Delfzijl, een kleine havenstad ten noorden van Groningen. In de video zie je hoe het spel er nu uitziet.</p>
-</section>
 
 <div class="cvwrap reveal">
   <a class="btn" href="cv.pdf" download>Download mijn cv</a>
