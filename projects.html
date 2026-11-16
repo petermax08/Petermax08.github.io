@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-en="Projects">Projecten</title>
+<meta name="description" content="Projecten van Peter: bedrijfsnetwerk met Cisco, FortiGate en Windows Server, stage-ervaring en een eigen game over Delfzijl.">
+<meta property="og:title" content="Projecten">
+<meta property="og:description" content="Projecten van Peter: bedrijfsnetwerk met Cisco, FortiGate en Windows Server, stage-ervaring en een eigen game over Delfzijl.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%F0%9F%92%BB</text></svg>">
+<link rel="stylesheet" href="style.css">
+<style>
+  header {
+    padding: 140px 24px 60px; text-align: center;
+    background: radial-gradient(circle at 25% 20%, #c3fce0 0%, transparent 50%),
+                radial-gradient(circle at 75% 60%, #8ec5fc 0%, transparent 50%), #fbfbfd;
+  }
+  h1 { font-size: clamp(48px, 9vw, 104px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05;
+       background: linear-gradient(90deg, #1d1d1f, #6e6e73); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  p.sub { font-size: clamp(18px, 2.6vw, 28px); color: #6e6e73; margin-top: 16px; font-weight: 500; }
+  .stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; padding: 60px 24px 20px; }
+  .stat { background: #fff; border-radius: 28px; padding: 36px 44px; text-align: center; min-width: 240px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
+  .stat b { display: block; font-size: clamp(48px, 7vw, 80px); letter-spacing: -0.03em; }
+  .stat span { color: #6e6e73; font-size: 17px; }
+  .projects { max-width: 1100px; margin: 0 auto; padding: 40px 24px 40px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+  .proj { background: #fff; border-radius: 28px; padding: 36px 32px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); transition: transform .4s ease; }
+  .proj:hover { transform: translateY(-8px) scale(1.01); }
+  .badge { display: inline-block; padding: 6px 14px; border-radius: 980px; font-size: 13px; font-weight: 600; background: #e8f1ff; color: #0066cc; margin-bottom: 16px; }
+  .proj h3 { font-size: 26px; margin-bottom: 12px; letter-spacing: -0.01em; }
+  .proj p { color: #6e6e73; line-height: 1.55; margin-bottom: 16px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { padding: 6px 14px; border-radius: 980px; background: #f2f2f4; font-size: 14px; color: #424245; }
+  .video-section { max-width: 900px; margin: 0 auto; padding: 20px 24px 20px; text-align: center; }
+  .video-section h2 { font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.02em; margin-bottom: 24px; }
+  .video-wrap { position: relative; aspect-ratio: 16 / 9; border-radius: 28px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.08); background: #000; }
+  .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .video-text { color: #6e6e73; line-height: 1.6; font-size: 18px; margin-top: 24px; text-align: left; }
+  html.night .video-wrap { box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+  html.night .video-text { color: #a1a1a6; }
+  footer { padding: 40px; text-align: center; color: #86868b; font-size: 13px; }
+  html.night p.sub, html.night .stat span, html.night .proj p { color: #a1a1a6; }
+  html.night header { background: radial-gradient(circle at 25% 20%, #1c4a3a 0%, transparent 50%), radial-gradient(circle at 75% 60%, #143a66 0%, transparent 50%), #000; }
+  html.night .stat, html.night .proj { background: #1c1c1e; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+  html.night .badge { background: #12294a; color: #7ab8ff; }
+  html.night .chip { background: #2c2c2e; color: #d1d1d6; }
+</style>
+</head>
+<body class="locked">
+
+<button id="themeBtn" title="Donker / licht" data-en-title="Dark / light">&#9790;</button>
+
+<nav>
+  <a href="index.html">Home</a>
+  <a href="index.html#about" data-en="About me">Over mij</a>
+  <a href="index.html#skills" data-en="Skills">Vaardigheden</a>
+  <a href="projects.html" class="active" data-en="Projects">Projecten</a>
+  <a href="gallery.html" data-en="Photo wall">Fotomuur</a>
+  <a href="game.html" data-en="Game">Spel</a>
+  <a href="index.html#contact">Contact</a>
+</nav>
+
+<header>
+  <h1 class="reveal" data-en="Projects">Projecten</h1>
+  <p class="sub reveal" data-en="What I&#x27;ve built and learned">Wat ik heb gebouwd en geleerd</p>
+</header>
+
+<!-- Video met uitleg, nu boven de cijfers -->
+<section class="video-section reveal">
+  <h2 data-en="My current project">Mijn huidige project</h2>
+  <div class="video-wrap">
+    <iframe src="https://www.youtube-nocookie.com/embed/LdK76hD-1iY"
+            title="Mijn huidige project" data-en-title="My current project"
+            loading="lazy"
+            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+            allowfullscreen></iframe>
+  </div>
+  <p class="video-text" data-en="Right now I&#x27;m working on a game about the place where I live: Delfzijl, a small port town north of Groningen. The video shows what the game looks like so far.">Op dit moment werk ik aan een game over de plek waar ik woon: Delfzijl, een kleine havenstad ten noorden van Groningen. In de video zie je hoe het spel er nu uitziet.</p>
+</section>
+
+<div class="stats">
+  <div class="stat reveal"><b data-to="18">0</b><span data-en="months of internship experience">maanden stage-ervaring</span></div>
+  <div class="stat reveal"><b data-to="3">0</b><span data-en="different internship placements">verschillende stageplaatsen</span></div>
+  <div class="stat reveal"><b data-to="6">0</b><span data-en="projects on this page">projecten op deze pagina</span></div>
+</div>
+
+<div class="projects">
+  <!-- NIEUW: offline AI -->
+  <div class="proj reveal">
+    <span class="badge" data-en="Personal project">Persoonlijk project</span>
+    <h3 data-en="AI implementation">AI-implementatie</h3>
+    <p data-en="I installed and set up my own AI that runs without internet. I can install AI models myself and adapt the AI to my needs.">Ik heb mijn eigen AI geïnstalleerd en ingesteld, zonder internet. Ik kan zelf AI-modellen installeren en de AI naar wens aanpassen.</p>
+    <div class="chips"><span class="chip" data-en="AI models">AI-modellen</span><span class="chip" data-en="Self-hosting">Zelf hosten</span><span class="chip" data-en="Customizable">Aanpasbaar</span></div>
+  </div>
+  <div class="proj reveal">
+    <span class="badge" data-en="School, lab and home">School, lab en thuis</span>
+    <h3 data-en="Business network (simulation)">Bedrijfsnetwerk (simulatie)</h3>
+    <p data-en="Set up a complete network for a small business with a Cisco switch, a FortiGate firewall and a Windows Server, with separate departments such as finance and HR. Built myself at school, in a lab environment and at home.">Een compleet netwerk voor een klein bedrijf opgezet met een Cisco-switch, een FortiGate-firewall en een Windows Server, met aparte afdelingen zoals financi&euml;n en HR. Op school, in een labomgeving en thuis zelf gebouwd.</p>
+    <div class="chips"><span class="chip">Cisco</span><span class="chip">FortiGate</span><span class="chip">Windows Server</span></div>
+  </div>
+  <div class="proj reveal">
+    <span class="badge" data-en="During internship">Tijdens stage</span>
+    <h3 data-en="On-site support">Support op locatie</h3>
+    <p data-en="Repaired laptops, prepared new computers for customers and installed meeting-room equipment such as cameras.">Laptops gerepareerd, nieuwe computers klaargemaakt voor klanten en vergaderapparatuur ge&iuml;nstalleerd, zoals camera's.</p>
+    <div class="chips"><span class="chip">Hardware</span><span class="chip" data-en="Installation">Installatie</span><span class="chip" data-en="Customer contact">Klantcontact</span></div>
+  </div>
+  <div class="proj reveal">
+    <span class="badge" data-en="During internship">Tijdens stage</span>
+    <h3 data-en="Service desk">Servicedesk</h3>
+    <p data-en="Helped customers with passwords and account management, including blocking the accounts of employees who had left. Gave remote support and set up label printers.">Klanten geholpen met wachtwoorden en accountbeheer, ook het blokkeren van accounts van vertrokken medewerkers. Op afstand meegekeken en labelprinters ingesteld.</p>
+    <div class="chips"><span class="chip" data-en="Account management">Accountbeheer</span><span class="chip">Remote support</span><span class="chip">Printers</span></div>
+  </div>
+  <div class="proj reveal">
+    <span class="badge" data-en="School project, team of 4">Schoolproject, team van 4</span>
+    <h3 data-en="Visitor counting at De Oosterpoort">Bezoekerstelling De Oosterpoort</h3>
+    <p data-en="As a team of four students, we built a system that counts visitors for De Oosterpoort in Groningen. Ordinary mini PCs, ordinary cameras and Linux with the open-source YOLO, with a solid result on modest hardware.">Met vier studenten een systeem gebouwd dat bezoekers telt voor De Oosterpoort in Groningen. Gewone mini-pc's, gewone camera's en Linux met het open-source YOLO, met een prima resultaat op bescheiden hardware.</p>
+    <div class="chips"><span class="chip">Linux</span><span class="chip">YOLO</span><span class="chip">Camera</span><span class="chip">Data</span></div>
+  </div>
+  <div class="proj reveal">
+    <span class="badge" data-en="Personal project">Persoonlijk project</span>
+    <h3 data-en="Game design &amp;amp; 3D printing">Game design &amp; 3D-printen</h3>
+    <p data-en="From game concept to printed object, as a hobby.">Van spelconcept tot gedrukt object, als hobby.</p>
+    <div class="chips"><span class="chip">Game design</span><span class="chip" data-en="3D printing">3D-printen</span></div>
+  </div>
+</div>
+
+<section class="cta reveal">
+  <h2 data-en="Curious what I can do for your team?">Benieuwd wat ik voor jouw team kan doen?</h2>
+  <p data-en="Here you can see what I&#x27;ve built and learned. I&#x27;m happy to tell you more in a conversation, including what I still want to learn.">Hier zie je wat ik heb gebouwd en geleerd. In een gesprek vertel ik je graag meer, ook over wat ik nog wil leren.</p>
+  <a class="btn" href="cv.pdf" download data-en="Download my CV">Download mijn cv</a>
+  <a class="more" href="index.html#contact" data-en="Or get in touch directly &amp;rarr;">Of neem direct contact op &rarr;</a>
+</section>
+
+<footer data-en="&amp;copy; 2026 Peter. All rights reserved.">&copy; 2026 Peter. Alle rechten voorbehouden.</footer>
+
+<button id="music" title="Muziek afspelen" data-en-title="Play music">&#9834;</button>
+<audio id="bgm" src="music.mp3" loop></audio>
+
+<script src="script.js"></script>
+<script>
+  // Scroll-animatie
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Getallen tellen op zodra ze in beeld komen
+  const counters = document.querySelectorAll('.stat b');
+  const cio = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target, to = +el.dataset.to, t0 = performance.now();
+      cio.unobserve(el);
+      (function step(now) {
+        const p = Math.min((now - t0) / 1400, 1);
+        el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(step);
+      })(t0);
+    });
+  }, { threshold: 0.6 });
+  counters.forEach(c => cio.observe(c));
+</script>
+
+</body>
+</html>

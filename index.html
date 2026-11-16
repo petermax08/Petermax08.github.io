@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-en="My personal page">Mijn persoonlijke pagina</title>
+<meta name="description" content="Peter, IT-support en netwerken: Windows Server, Cisco en FortiGate. Over mij, mijn vaardigheden en projecten.">
+<meta property="og:title" content="Mijn persoonlijke pagina">
+<meta property="og:description" content="Peter, IT-support en netwerken: Windows Server, Cisco en FortiGate. Over mij, mijn vaardigheden en projecten.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%F0%9F%92%BB</text></svg>">
+<link rel="stylesheet" href="style.css">
+<style>
+  section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 80px 24px; }
+  .hero {
+    background: radial-gradient(circle at 30% 20%, #ffd3b8 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, #8ec5fc 0%, transparent 50%),
+                #fbfbfd;
+  }
+  h1 { font-size: clamp(48px, 9vw, 112px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05;
+       background: linear-gradient(90deg, #1d1d1f, #6e6e73); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  h2 { font-size: clamp(36px, 6vw, 72px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 24px; }
+  .tilt-wrap { perspective: 1000px; margin-bottom: 40px; }
+  .tilt-card {
+    position: relative; width: min(320px, 80vw); aspect-ratio: 4 / 5; border-radius: 32px; overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    transform-style: preserve-3d; transition: transform .15s ease-out, box-shadow .3s;
+  }
+  .tilt-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .tilt-card .shine {
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.45), transparent 55%);
+    opacity: 0; transition: opacity .3s;
+  }
+  .tilt-card:hover .shine { opacity: 1; }
+  p.sub { font-size: clamp(20px, 3vw, 32px); color: #6e6e73; margin-top: 20px; font-weight: 500; }
+  p.text { font-size: clamp(18px, 2vw, 24px); color: #424245; max-width: 700px; line-height: 1.6; }
+  .dark { background: #000; color: #f5f5f7; }
+  .dark p.text { color: #a1a1a6; }
+  .cards { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; margin-top: 40px; }
+  .card {
+    background: #fff; color: #1d1d1f; border-radius: 28px; padding: 40px 32px; width: 280px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08); transition: transform .4s ease;
+  }
+  .card:hover { transform: translateY(-8px) scale(1.02); }
+  .card h3 { font-size: 24px; margin-bottom: 12px; }
+  .card p { color: #6e6e73; line-height: 1.5; }
+  .btn { margin-top: 32px; }
+  .hero-btn { margin-top: 36px; }
+  footer { padding: 40px; text-align: center; color: #86868b; font-size: 13px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-top: 32px; max-width: 760px; }
+  .tag {
+    padding: 16px 32px; border-radius: 980px; background: #fff; color: #1d1d1f; font-size: clamp(18px, 2vw, 22px);
+    font-weight: 500; box-shadow: 0 6px 24px rgba(0,0,0,0.08); transition: transform .3s, box-shadow .3s;
+  }
+  .tag:hover { transform: translateY(-4px) scale(1.04); box-shadow: 0 12px 32px rgba(0,0,0,0.14); }
+  .cursor { display: inline-block; width: 4px; height: .9em; margin-left: 6px; background: #6e6e73; vertical-align: -0.08em; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  html.night p.sub, html.night p.text { color: #a1a1a6; }
+  html.night .hero { background: radial-gradient(circle at 30% 20%, #4a2616 0%, transparent 50%), radial-gradient(circle at 70% 80%, #143a66 0%, transparent 50%), #000; }
+  html.night .dark { background: #111; }
+  html.night .tag { background: #1c1c1e; color: #f5f5f7; box-shadow: 0 6px 24px rgba(0,0,0,0.5); }
+  html.night .cursor { background: #a1a1a6; }
+</style>
+</head>
+<body class="locked">
+
+<button id="themeBtn" title="Donker / licht" data-en-title="Dark / light">&#9790;</button>
+
+<nav>
+  <a href="#top">Home</a>
+  <a href="#about" data-en="About me">Over mij</a>
+  <a href="#skills" data-en="Skills">Vaardigheden</a>
+  <a href="projects.html" data-en="Projects">Projecten</a>
+  <a href="gallery.html" data-en="Photo wall">Fotomuur</a>
+  <a href="game.html" data-en="Game">Spel</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<section class="hero" id="top">
+  <h1 class="reveal"><span id="typed"></span><span class="cursor"></span></h1>
+  <p class="sub reveal" data-en="IT engineer · Game designer · Problem solver">IT-engineer · Game designer · Probleemoplosser</p>
+  <a class="btn reveal hero-btn" href="projects.html" data-en="See my projects">Bekijk mijn projecten</a>
+</section>
+
+<section id="about">
+  <div class="tilt-wrap reveal">
+    <div class="tilt-card" id="tilt">
+      <img src="photos/me.jpg" alt="Mijn foto" data-en-alt="My photo">
+      <div class="shine"></div>
+    </div>
+  </div>
+  <h2 class="reveal" data-en="About me">Over mij</h2>
+  <p class="text reveal" data-en="I&#x27;m Peter, a cheerful and positive person with a real passion for my work. Hard work doesn&#x27;t scare me, and I love learning new things. I live in Delfzijl, a small port town in Groningen.">Ik ben Peter, een vrolijk en positief mens met een grote passie voor mijn werk. Hard werken schrikt me niet af, en ik leer graag nieuwe dingen. Ik woon in Delfzijl, een kleine havenstad in Groningen.</p>
+</section>
+
+<section class="dark" id="skills">
+  <h2 class="reveal" data-en="What I&#x27;m good at">Waar ik goed in ben</h2>
+  <div class="cards">
+    <div class="card reveal"><h3>Windows Server</h3><p data-en="Installing, configuring and managing Windows servers and business environments.">Installatie, configuratie en beheer van Windows-servers en bedrijfsomgevingen.</p></div>
+    <div class="card reveal"><h3 data-en="Network equipment">Netwerkapparatuur</h3><p data-en="Setting up networks and solving problems, with hands-on experience with Cisco switches and FortiGate firewalls.">Netwerken opzetten en storingen oplossen, met praktijkervaring op Cisco-switches en FortiGate-firewalls.</p></div>
+    <div class="card reveal"><h3 data-en="Repair &amp;amp; maintenance">Reparatie &amp; onderhoud</h3><p data-en="Repairing computers and keeping equipment in top condition.">Computers repareren en apparatuur in topconditie houden.</p></div>
+    <div class="card reveal"><h3 data-en="Creative making">Creatief maken</h3><p data-en="From game concept to printed object: game design and 3D printing.">Van spelconcept tot gedrukt object: game design en 3D-printen.</p></div>
+  </div>
+</section>
+
+<section id="hobbies">
+  <h2 class="reveal" data-en="My hobbies">Mijn hobby's</h2>
+  <p class="text reveal" data-en="What I do when I&#x27;m not behind a computer.">Wat ik doe als ik niet achter de computer zit.</p>
+  <div class="tags">
+    <div class="tag reveal" data-en="&amp;#128690; Cycling">&#128690; Fietsen</div>
+    <div class="tag reveal" data-en="&amp;#127916; Watching films">&#127916; Films kijken</div>
+    <div class="tag reveal" data-en="&amp;#127911; Listening to music">&#127911; Muziek luisteren</div>
+    <div class="tag reveal" data-en="&amp;#127928; Playing the ukulele">&#127928; Ukelele spelen</div>
+    <div class="tag reveal" data-en="&amp;#128214; Reading books">&#128214; Boeken lezen</div>
+    <div class="tag reveal" data-en="&amp;#9992;&amp;#65039; Travelling">&#9992;&#65039; Reizen</div>
+  </div>
+</section>
+
+<section id="contact" class="cta">
+  <h2 class="reveal" data-en="Let&#x27;s get to know each other">Laten we kennismaken</h2>
+  <p class="reveal" data-en="I&#x27;m curious about your team and what I could bring to it. I look forward to hearing from you!">Ik ben benieuwd naar jouw team en wat ik daar kan betekenen. Ik kijk ernaar uit om van je te horen!</p>
+  <a class="btn reveal" href="mailto:your@email.com" data-en="Send me an email">Stuur me een e-mail</a>
+  <a class="more reveal" href="game.html" data-en="Or take a quick break and play a game &amp;rarr;">Of speel eerst even een spelletje &rarr;</a>
+</section>
+
+<footer data-en="© 2026 Peter. All rights reserved.">© 2026 Peter. Alle rechten voorbehouden.</footer>
+
+<button id="music" title="Muziek afspelen" data-en-title="Play music">♪</button>
+<audio id="bgm" src="music.mp3" loop></audio>
+
+<script src="script.js"></script>
+<script>
+  // Typemachine-effect voor de titel
+  (function () {
+    const greet = () => t('Hallo, ik ben Peter.', "Hi, I'm Peter.");
+    const el = document.getElementById('typed');
+    let i = 0, done = false;
+    function type() {
+      const text = greet();
+      if (i <= text.length) {
+        el.textContent = text.slice(0, i);
+        i++;
+        setTimeout(type, 90 + Math.random() * 70);
+      } else { done = true; }
+    }
+    setTimeout(type, 600);
+    document.addEventListener('langchange', () => { if (done) el.textContent = greet(); });
+  })();
+
+  // Scroll-animatie
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+  }, { threshold: 0.2 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // 3D-kantelen van de foto
+  const tilt = document.getElementById('tilt');
+  if (tilt && window.matchMedia('(hover: hover)').matches) {
+    tilt.addEventListener('mousemove', (e) => {
+      const r = tilt.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width;
+      const y = (e.clientY - r.top) / r.height;
+      tilt.style.transform = 'rotateY(' + ((x - 0.5) * 8) + 'deg) rotateX(' + ((0.5 - y) * 8) + 'deg) scale(1.02)';
+      tilt.style.setProperty('--mx', (x * 100) + '%');
+      tilt.style.setProperty('--my', (y * 100) + '%');
+    });
+    tilt.addEventListener('mouseleave', () => {
+      tilt.style.transform = 'rotateY(0deg) rotateX(0deg) scale(1)';
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+/* Gedeelde stijl voor alle pagina's */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Helvetica Neue", sans-serif;
+  background: #fbfbfd; color: #1d1d1f; -webkit-font-smoothing: antialiased;
+}
+
+/* Navigatie */
+nav {
+  position: fixed; top: 0; width: 100%; height: 48px;
+  display: flex; justify-content: center; gap: 40px; align-items: center;
+  background: rgba(251,251,253,0.72);
+  backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px);
+  z-index: 10; font-size: 13px;
+}
+nav a { color: #1d1d1f; text-decoration: none; opacity: 0.8; white-space: nowrap; }
+nav a:hover, nav a.active { opacity: 1; font-weight: 600; }
+
+/* Op smalle schermen: kleinere tussenruimte en horizontaal scrollen, met ruimte voor de knoppen rechts */
+@media (max-width: 820px) {
+  nav {
+    width: auto; left: 0; right: 100px; /* links stoppen vóór de knoppen rechtsboven */
+    justify-content: flex-start; gap: 22px; padding: 0 16px;
+    overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    box-shadow: 100px 0 0 rgba(251,251,253,0.72); /* balk loopt door achter de knoppen */
+  }
+  nav::-webkit-scrollbar { display: none; }
+  html.night nav { box-shadow: 100px 0 0 rgba(0,0,0,0.72); }
+}
+
+/* Thema-knop */
+#themeBtn {
+  position: fixed; top: 8px; right: 20px; width: 32px; height: 32px; border-radius: 50%;
+  border: none; cursor: pointer; font-size: 16px; z-index: 15;
+  background: rgba(0,0,0,0.06); color: #1d1d1f; transition: transform .3s, background .3s;
+}
+#themeBtn:hover { transform: scale(1.12); }
+
+/* Taalknop (NL / EN) */
+#langBtn {
+  position: fixed; top: 8px; right: 60px; width: 32px; height: 32px; border-radius: 50%;
+  border: none; cursor: pointer; font-size: 12px; font-weight: 700; letter-spacing: .02em; z-index: 101;
+  background: rgba(0,0,0,0.06); color: #1d1d1f; transition: transform .3s, background .3s;
+}
+#langBtn:hover { transform: scale(1.12); }
+html.night #langBtn, body.locked #langBtn { background: rgba(60,60,67,0.7); color: #f5f5f7; }
+
+/* Muziekknop */
+#music {
+  position: fixed; right: 24px; bottom: 24px; width: 56px; height: 56px; border-radius: 50%;
+  border: none; cursor: pointer; font-size: 22px; z-index: 20;
+  background: rgba(255,255,255,0.8); backdrop-filter: blur(20px);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.15); transition: transform .3s;
+}
+#music:hover { transform: scale(1.1); }
+
+/* Scroll-animatie */
+.reveal { opacity: 0; transform: translateY(40px); transition: all 1s cubic-bezier(.2,.7,.2,1); }
+.reveal.show { opacity: 1; transform: none; }
+
+/* Donker thema */
+html.night body { background: #000; color: #f5f5f7; }
+html.night nav { background: rgba(0,0,0,0.72); }
+html.night nav a { color: #f5f5f7; }
+html.night h1 { background: linear-gradient(90deg, #f5f5f7, #a1a1a6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+html.night #music, html.night #themeBtn { background: rgba(60,60,67,0.7); color: #f5f5f7; }
+
+/* Wachtwoordscherm */
+#lock {
+  position: fixed; inset: 0; z-index: 100; display: flex; justify-content: center; align-items: center;
+  background: #0b0b14; overflow: hidden; padding: 24px;
+  transition: opacity .8s ease, transform .8s ease;
+}
+#lock.done { opacity: 0; transform: scale(1.08); pointer-events: none; }
+.orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .75; will-change: transform; }
+.orb.o1 { width: 46vmax; height: 46vmax; background: #8e5cff; top: -12vmax; left: -10vmax; animation: float1 14s ease-in-out infinite; }
+.orb.o2 { width: 40vmax; height: 40vmax; background: #2fa8ff; bottom: -14vmax; right: -8vmax; animation: float2 17s ease-in-out infinite; }
+.orb.o3 { width: 32vmax; height: 32vmax; background: #ff5fa2; top: 30%; left: 40%; animation: float3 19s ease-in-out infinite; }
+@keyframes float1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(14vmax,10vmax) scale(1.15); } }
+@keyframes float2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-16vmax,-8vmax) scale(1.2); } }
+@keyframes float3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-10vmax,12vmax) scale(.85); } }
+.lock-card {
+  position: relative; z-index: 2; width: min(380px, 100%); padding: 44px 32px; text-align: center;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); border-radius: 32px;
+  backdrop-filter: blur(30px) saturate(160%); -webkit-backdrop-filter: blur(30px) saturate(160%);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.4); color: #fff;
+  animation: cardIn 1s cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes cardIn { from { opacity: 0; transform: translateY(30px) scale(.96); } to { opacity: 1; transform: none; } }
+.lock-card.shake { animation: shake .45s ease; }
+@keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-12px); } 40% { transform: translateX(10px); } 60% { transform: translateX(-8px); } 80% { transform: translateX(6px); } }
+.lock-icon { font-size: 40px; margin-bottom: 12px; }
+.lock-card h2 { font-size: 26px; margin-bottom: 24px; color: #fff; letter-spacing: -0.01em; }
+.lock-card input {
+  width: 100%; padding: 15px 20px; font-size: 17px; border-radius: 980px; text-align: center; color: #fff;
+  background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.3); outline: none;
+  transition: box-shadow .3s, border-color .3s;
+}
+.lock-card input::placeholder { color: rgba(255,255,255,0.6); }
+.lock-card input:focus { border-color: #fff; box-shadow: 0 0 0 4px rgba(255,255,255,0.18), 0 0 30px rgba(142,92,255,0.7); }
+.lock-card button {
+  margin-top: 16px; width: 100%; padding: 14px; font-size: 17px; border: none; border-radius: 980px;
+  background: #fff; color: #1d1d1f; cursor: pointer; font-weight: 600; transition: transform .2s;
+}
+.lock-card button:hover { transform: scale(1.03); }
+.lock-card .err { color: #ffb3b8; font-size: 14px; min-height: 20px; margin-top: 14px; }
+body.locked > :not(#lock):not(#langBtn) { visibility: hidden; }
+
+/* Warme accentkleur voor de belangrijkste knop op elke pagina */
+:root { --warm: #d4521f; --warm-hover: #bf4719; }
+.btn {
+  display: inline-block; padding: 16px 40px; border: none; border-radius: 980px; cursor: pointer;
+  background: var(--warm); color: #fff; text-decoration: none; font-size: 18px; font-weight: 600;
+  box-shadow: 0 8px 24px rgba(212,82,31,0.28); transition: background .3s, transform .2s;
+}
+.btn:hover { background: var(--warm-hover); transform: scale(1.03); }
+
+/* Afsluiter onderaan elke pagina: één duidelijke volgende stap */
+.cta { text-align: center; padding: 60px 24px 100px; }
+.cta h2 { font-size: clamp(28px, 4vw, 44px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 14px; }
+.cta p { color: #6e6e73; font-size: clamp(17px, 2vw, 20px); max-width: 580px; margin: 0 auto 28px; line-height: 1.6; }
+.cta .more { display: block; margin-top: 20px; color: var(--warm); text-decoration: none; font-size: 16px; font-weight: 500; }
+.cta .more:hover { text-decoration: underline; }
+html.night .cta p { color: #a1a1a6; }
+html.night .cta .more { color: #ff8a5c; }

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-en="Photo wall">Fotomuur</title>
+<meta name="description" content="Foto's en video's van momenten die Peter wil bewaren.">
+<meta property="og:title" content="Fotomuur">
+<meta property="og:description" content="Foto's en video's van momenten die Peter wil bewaren.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%F0%9F%92%BB</text></svg>">
+<link rel="stylesheet" href="style.css">
+<style>
+  header {
+    padding: 140px 24px 60px; text-align: center;
+    background: radial-gradient(circle at 25% 20%, #ffd1dc 0%, transparent 50%),
+                radial-gradient(circle at 75% 60%, #8ec5fc 0%, transparent 50%),
+                #fbfbfd;
+  }
+  h1 { font-size: clamp(48px, 9vw, 104px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05;
+       background: linear-gradient(90deg, #1d1d1f, #6e6e73); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  p.sub { font-size: clamp(18px, 2.6vw, 28px); color: #6e6e73; margin-top: 16px; font-weight: 500; }
+  .grid {
+    max-width: 1100px; margin: 0 auto; padding: 40px 24px 100px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;
+  }
+  .grid img {
+    width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 24px; cursor: zoom-in;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s;
+  }
+  .grid img:hover { transform: scale(1.03); box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+  h3.vtitle { text-align: center; font-size: clamp(28px, 4vw, 48px); font-weight: 700; letter-spacing: -0.02em; margin-top: 20px; }
+  .videos {
+    max-width: 1100px; margin: 0 auto; padding: 32px 24px 100px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;
+  }
+  .videos video {
+    width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 24px; background: #000;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+  }
+  #lightbox {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(10px);
+    display: none; justify-content: center; align-items: center; z-index: 50; cursor: zoom-out;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox img { max-width: 92vw; max-height: 90vh; border-radius: 16px; }
+  footer { padding: 40px; text-align: center; color: #86868b; font-size: 13px; }
+  html.night p.sub { color: #a1a1a6; }
+  html.night header { background: radial-gradient(circle at 25% 20%, #5a2a44 0%, transparent 50%), radial-gradient(circle at 75% 60%, #143a66 0%, transparent 50%), #000; }
+  html.night .grid img { box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+</style>
+</head>
+<body class="locked">
+
+<button id="themeBtn" title="Donker / licht" data-en-title="Dark / light">&#9790;</button>
+
+<nav>
+  <a href="index.html">Home</a>
+  <a href="index.html#about" data-en="About me">Over mij</a>
+  <a href="index.html#skills" data-en="Skills">Vaardigheden</a>
+  <a href="projects.html" data-en="Projects">Projecten</a>
+  <a href="gallery.html" class="active" data-en="Photo wall">Fotomuur</a>
+  <a href="game.html" data-en="Game">Spel</a>
+  <a href="index.html#contact">Contact</a>
+</nav>
+
+<header>
+  <h1 class="reveal" data-en="Photo wall">Fotomuur</h1>
+  <p class="sub reveal" data-en="The moments I want to keep">De momenten die ik wil bewaren</p>
+</header>
+
+<div class="grid">
+  <img class="reveal" src="photos/1.jpg" alt="Foto 1" data-en-alt="Photo 1">
+  <img class="reveal" src="photos/2.jpg" alt="Foto 2" data-en-alt="Photo 2">
+  <img class="reveal" src="photos/3.jpg" alt="Foto 3" data-en-alt="Photo 3">
+  <img class="reveal" src="photos/4.jpg" alt="Foto 4" data-en-alt="Photo 4">
+  <img class="reveal" src="photos/5.jpg" alt="Foto 5" data-en-alt="Photo 5">
+  <img class="reveal" src="photos/6.jpg" alt="Foto 6" data-en-alt="Photo 6">
+</div>
+
+<h3 class="vtitle reveal" data-en="Videos">Video's</h3>
+<div class="videos">
+  <video class="reveal" src="videos/video1.mp4" controls preload="metadata" playsinline></video>
+  <video class="reveal" src="videos/video2.mp4" controls preload="metadata" playsinline></video>
+  <video class="reveal" src="videos/video3.mp4" controls preload="metadata" playsinline></video>
+  <video class="reveal" src="videos/video4.mp4" controls preload="metadata" playsinline></video>
+</div>
+
+<div id="lightbox"><img src="" alt=""></div>
+
+<section class="cta reveal">
+  <h2 data-en="This is me, outside of work too">Dit ben ik, ook buiten het werk</h2>
+  <p data-en="Curious how I&#x27;d fit into your team? I&#x27;d love to meet you.">Benieuwd hoe ik in jouw team pas? Ik maak graag kennis.</p>
+  <a class="btn" href="index.html#contact" data-en="Get in touch">Neem contact op</a>
+</section>
+
+<footer data-en="© 2026 Peter. All rights reserved.">© 2026 Peter. Alle rechten voorbehouden.</footer>
+
+<button id="music" title="Muziek afspelen" data-en-title="Play music">♪</button>
+<audio id="bgm" src="music.mp3" loop></audio>
+
+<script src="script.js"></script>
+<script>
+  // Scroll-animatie
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Klik om te vergroten
+  const lb = document.getElementById('lightbox');
+  const lbImg = lb.querySelector('img');
+  document.querySelectorAll('.grid img').forEach(img => {
+    img.addEventListener('click', () => { lbImg.src = img.src; lb.classList.add('open'); });
+  });
+  lb.addEventListener('click', () => lb.classList.remove('open'));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') lb.classList.remove('open'); });
+
+  // Er speelt maar één video tegelijk, en de achtergrondmuziek pauzeert tijdens een video
+  const vids = document.querySelectorAll('.videos video');
+  vids.forEach(v => {
+    v.addEventListener('play', () => {
+      vids.forEach(o => { if (o !== v) o.pause(); });
+      const m = document.getElementById('bgm'), mb = document.getElementById('music');
+      if (m && !m.paused) { m.pause(); mb.textContent = '♪'; }
+    });
+  });
+</script>
+
+</body>
+</html>
