@@ -81,6 +81,41 @@
                    background: #fff; color: #1d1d1f; font-size: 14px; font-weight: 600; white-space: nowrap;
                    box-shadow: 0 4px 14px rgba(0,0,0,0.15); opacity: 0; animation: bubble 3.4s linear forwards; }
   @keyframes bubble { 0%,25% { opacity: 0; transform: translateY(6px); } 32%,62% { opacity: 1; transform: none; } 70%,100% { opacity: 0; } }
+  /* Kleine animaties op de vaardigheden-kaarten: spelen alleen als je de muis erop houdt (op telefoons als de kaart in beeld komt) */
+  .skill-ico { height: 72px; margin: -8px 0 14px; }
+  .skill-ico svg { height: 100%; width: auto; overflow: visible; }
+  .ico .led { opacity: .9; }
+  .ico-net .pkt { opacity: 0; }
+  .ico-fix .tick { stroke-dasharray: 32; stroke-dashoffset: 32; }
+  .ico-fix .driver, .ico-print .nozzle { transform-box: fill-box; }
+  .ico-fix .driver { transform-origin: 50% 100%; }
+  @keyframes ledBlink { 0%,100% { opacity: .25; } 50% { opacity: 1; } }
+  @keyframes pktGo { 0% { transform: translateX(0); opacity: 0; } 10%,85% { opacity: 1; } 100% { transform: translateX(52px); opacity: 0; } }
+  @keyframes pktBack { 0% { transform: translateX(0); opacity: 0; } 10%,85% { opacity: 1; } 100% { transform: translateX(-52px); opacity: 0; } }
+  @keyframes twist { 0% { transform: rotate(0); } 12% { transform: rotate(-18deg); } 24% { transform: rotate(18deg); } 36% { transform: rotate(-18deg); } 48% { transform: rotate(18deg); } 58%,100% { transform: rotate(0) translateY(-4px); } }
+  @keyframes screenOn { 0%,55% { fill: #1b2436; } 70%,100% { fill: #e9f8ee; } }
+  @keyframes tickDraw { 0%,65% { stroke-dashoffset: 32; } 85%,100% { stroke-dashoffset: 0; } }
+  @keyframes nozzleMove { 0%,100% { transform: translateX(-12px); } 50% { transform: translateX(12px); } }
+  @keyframes layer1 { 0%,8% { opacity: 0; } 12%,90% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes layer2 { 0%,28% { opacity: 0; } 32%,90% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes layer3 { 0%,48% { opacity: 0; } 52%,90% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes layer4 { 0%,68% { opacity: 0; } 72%,90% { opacity: 1; } 100% { opacity: 0; } }
+  .card:hover .ico .led, .anim .ico .led { animation: ledBlink .9s ease-in-out infinite; }
+  .card:hover .ico .led1, .anim .ico .led1 { animation-delay: .3s; }
+  .card:hover .ico .led2, .anim .ico .led2 { animation-delay: .6s; }
+  .card:hover .ico .led.b, .anim .ico .led.b { animation-duration: .6s; }
+  .card:hover .ico-net .p1, .anim .ico-net .p1 { animation: pktGo 1.4s linear infinite; }
+  .card:hover .ico-net .p2, .anim .ico-net .p2 { animation: pktGo 1.4s linear .7s infinite; }
+  .card:hover .ico-net .back, .anim .ico-net .back { animation: pktBack 1.4s linear .35s infinite; }
+  .card:hover .ico-fix .driver, .anim .ico-fix .driver { animation: twist 1.8s ease-in-out forwards; }
+  .card:hover .ico-fix .disp, .anim .ico-fix .disp { animation: screenOn 1.8s ease forwards; }
+  .card:hover .ico-fix .tick, .anim .ico-fix .tick { animation: tickDraw 1.8s ease forwards; }
+  .card:hover .ico-print .nozzle, .anim .ico-print .nozzle { animation: nozzleMove .8s ease-in-out infinite; }
+  .card:hover .ico-print .l1, .anim .ico-print .l1 { animation: layer1 3.2s linear infinite; }
+  .card:hover .ico-print .l2, .anim .ico-print .l2 { animation: layer2 3.2s linear infinite; }
+  .card:hover .ico-print .l3, .anim .ico-print .l3 { animation: layer3 3.2s linear infinite; }
+  .card:hover .ico-print .l4, .anim .ico-print .l4 { animation: layer4 3.2s linear infinite; }
+  @media (prefers-reduced-motion: reduce) { .ico * { animation: none !important; } .ico-fix .tick { stroke-dashoffset: 0; } }
 </style>
 </head>
 <body class="locked">
@@ -118,10 +153,10 @@
 <section class="dark" id="skills">
   <h2 class="reveal" data-en="What I&#x27;m good at">Waar ik goed in ben</h2>
   <div class="cards">
-    <div class="card reveal"><h3>Windows Server</h3><p data-en="Installing, configuring and managing Windows servers and business environments.">Installatie, configuratie en beheer van Windows-servers en bedrijfsomgevingen.</p></div>
-    <div class="card reveal"><h3 data-en="Network equipment">Netwerkapparatuur</h3><p data-en="Setting up networks and solving problems, with hands-on experience with Cisco switches and FortiGate firewalls.">Netwerken opzetten en storingen oplossen, met praktijkervaring op Cisco-switches en FortiGate-firewalls.</p></div>
-    <div class="card reveal"><h3 data-en="Repair &amp;amp; maintenance">Reparatie &amp; onderhoud</h3><p data-en="Repairing computers and keeping equipment in top condition.">Computers repareren en apparatuur in topconditie houden.</p></div>
-    <div class="card reveal"><h3 data-en="Creative making">Creatief maken</h3><p data-en="From game concept to printed object: game design and 3D printing.">Van spelconcept tot gedrukt object: game design en 3D-printen.</p></div>
+    <div class="card reveal"><div class="skill-ico"><svg class="ico ico-server" viewBox="0 0 120 72" aria-hidden="true">  <rect x="34" y="4" width="52" height="64" rx="7" fill="#2b3a55"/>  <rect x="40" y="10" width="40" height="15" rx="3" fill="#3b4d6e"/><circle class="led led0" cx="47" cy="17.5" r="2.6" fill="#5fd38a"/><circle class="led led0 b" cx="55" cy="17.5" r="2.6" fill="#5fb4ff"/><path d="M63 14.5 h12 M63 17.5 h12 M63 20.5 h12" stroke="#5c6f92" stroke-width="1.6" stroke-linecap="round"/><rect x="40" y="29" width="40" height="15" rx="3" fill="#3b4d6e"/><circle class="led led1" cx="47" cy="36.5" r="2.6" fill="#5fd38a"/><circle class="led led1 b" cx="55" cy="36.5" r="2.6" fill="#5fb4ff"/><path d="M63 33.5 h12 M63 36.5 h12 M63 39.5 h12" stroke="#5c6f92" stroke-width="1.6" stroke-linecap="round"/><rect x="40" y="48" width="40" height="15" rx="3" fill="#3b4d6e"/><circle class="led led2" cx="47" cy="55.5" r="2.6" fill="#5fd38a"/><circle class="led led2 b" cx="55" cy="55.5" r="2.6" fill="#5fb4ff"/><path d="M63 52.5 h12 M63 55.5 h12 M63 58.5 h12" stroke="#5c6f92" stroke-width="1.6" stroke-linecap="round"/></svg></div><h3>Windows Server</h3><p data-en="Installing, configuring and managing Windows servers and business environments.">Installatie, configuratie en beheer van Windows-servers en bedrijfsomgevingen.</p></div>
+    <div class="card reveal"><div class="skill-ico"><svg class="ico ico-net" viewBox="0 0 120 72" aria-hidden="true">  <path d="M30 40 H90" stroke="#c7d2e3" stroke-width="3" stroke-linecap="round"/>  <rect x="4" y="30" width="30" height="20" rx="4" fill="#2b3a55"/>  <rect x="9" y="42" width="3.5" height="3" rx="1" fill="#5fd38a"/><rect x="15" y="42" width="3.5" height="3" rx="1" fill="#5fd38a"/><rect x="21" y="42" width="3.5" height="3" rx="1" fill="#5fd38a"/><rect x="27" y="42" width="3.5" height="3" rx="1" fill="#5fd38a"/>  <path d="M100 26 l14 5 v8 c0 8 -6 13 -14 16 c-8 -3 -14 -8 -14 -16 v-8 z" fill="#d4521f"/>  <path d="M93 37 h14 M93 42 h14 M100 33 v4 M96 37 v5 M104 37 v5 M100 42 v5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".85"/>  <circle class="pkt p1" cx="34" cy="40" r="3.2" fill="#d4521f"/>  <circle class="pkt p2" cx="34" cy="40" r="3.2" fill="#d4521f"/>  <circle class="pkt back" cx="86" cy="40" r="3.2" fill="#5fb4ff"/></svg></div><h3 data-en="Network equipment">Netwerkapparatuur</h3><p data-en="Setting up networks and solving problems, with hands-on experience with Cisco switches and FortiGate firewalls.">Netwerken opzetten en storingen oplossen, met praktijkervaring op Cisco-switches en FortiGate-firewalls.</p></div>
+    <div class="card reveal"><div class="skill-ico"><svg class="ico ico-fix" viewBox="0 0 120 72" aria-hidden="true">  <rect x="28" y="8" width="56" height="38" rx="4" fill="#2b3a55"/>  <rect class="disp" x="32" y="12" width="48" height="30" rx="2" fill="#1b2436"/>  <path class="tick" d="M46 27 l7 7 l13 -14" fill="none" stroke="#2fae5f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>  <path d="M20 47 H92 L98 54 H14 Z" fill="#8a94a6"/>  <circle cx="88" cy="50.5" r="2.4" fill="#5a6476"/><path d="M86.6 50.5 h2.8" stroke="#c9ced8" stroke-width="1"/>  <g class="driver"><rect x="83" y="10" width="10" height="20" rx="4" fill="#d4521f"/><rect x="86.5" y="30" width="3" height="17" rx="1" fill="#9aa3b2"/></g></svg></div><h3 data-en="Repair &amp;amp; maintenance">Reparatie &amp; onderhoud</h3><p data-en="Repairing computers and keeping equipment in top condition.">Computers repareren en apparatuur in topconditie houden.</p></div>
+    <div class="card reveal"><div class="skill-ico"><svg class="ico ico-print" viewBox="0 0 120 72" aria-hidden="true">  <rect x="22" y="6" width="5" height="58" rx="2" fill="#2b3a55"/><rect x="93" y="6" width="5" height="58" rx="2" fill="#2b3a55"/>  <rect x="22" y="6" width="76" height="6" rx="2" fill="#3b4d6e"/>  <rect x="30" y="61" width="60" height="4" rx="2" fill="#8a94a6"/>  <rect class="layer l1" x="46" y="54" width="28" height="7" fill="#f2994a"/><rect class="layer l2" x="46" y="47" width="28" height="7" fill="#e8833a"/><rect class="layer l3" x="46" y="40" width="28" height="7" fill="#f2994a"/><rect class="layer l4" x="46" y="33" width="28" height="7" fill="#e8833a"/>  <g class="nozzle"><rect x="52" y="12" width="16" height="9" rx="2" fill="#2b3a55"/><path d="M56 21 h8 l-4 6 z" fill="#d4521f"/></g></svg></div><h3 data-en="Creative making">Creatief maken</h3><p data-en="From game concept to printed object: game design and 3D printing.">Van spelconcept tot gedrukt object: game design en 3D-printen.</p></div>
   </div>
 </section>
 
@@ -230,6 +265,14 @@
       el.addEventListener('animationend', (e) => { if (e.animationName === 'tabbyRun') { el.remove(); running = false; } });
     }
   })();
+
+  // Op telefoons (geen muis) spelen de vaardigheden-animaties zodra een kaart in beeld komt
+  if (!window.matchMedia('(hover: hover)').matches) {
+    const sio = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('anim'); else e.target.classList.remove('anim'); });
+    }, { threshold: 0.6 });
+    document.querySelectorAll('.card').forEach(c => sio.observe(c));
+  }
 
   // 3D-kantelen van de foto
   const tilt = document.getElementById('tilt');
