@@ -39,6 +39,20 @@
   #snakeOverlay.hide { display: none; }
   #snakeOverlay h2 { font-size: 32px; margin-bottom: 8px; letter-spacing: -0.02em; }
   #snakeOverlay p { color: #c7c7d1; margin-bottom: 20px; line-height: 1.5; }
+  /* Springende kat */
+  h2.gtitle.warm { background: linear-gradient(90deg, #d4521f, #f2994a, #8a7d6e); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  #jumpStage { position: relative; width: min(640px, 100%); }
+  #jump { width: 100%; height: auto; display: block; border-radius: 28px; touch-action: none; cursor: pointer;
+          box-shadow: 0 20px 60px rgba(212,82,31,0.22); background: #ffe9d6; }
+  #jumpOverlay {
+    position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center;
+    border-radius: 28px; background: rgba(255,255,255,0.74); backdrop-filter: blur(10px); text-align: center; padding: 20px;
+  }
+  #jumpOverlay.hide { display: none; }
+  #jumpOverlay h2 { font-size: 30px; margin-bottom: 6px; letter-spacing: -0.02em; }
+  #jumpOverlay p { color: #424245; margin-bottom: 16px; line-height: 1.5; }
+  html.night #jumpOverlay { background: rgba(0,0,0,0.66); }
+  html.night #jumpOverlay p { color: #c7c7d1; }
   footer { padding: 30px; text-align: center; color: #86868b; font-size: 13px; }
   #soundBtn {
     position: fixed; top: 8px; right: 100px; width: 32px; height: 32px; border-radius: 50%;
@@ -102,6 +116,22 @@
     </div>
   </div>
   <p class="hint" data-en="Arrow keys or W A S D, or swipe on your phone">Pijltjestoetsen of W A S D, of veeg op je telefoon</p>
+
+  <h2 class="gtitle warm" data-en="Jumping Cat">Springende kat</h2>
+  <p class="sub" data-en="Help my tabby jump over the boxes and flower pots. The longer you run, the faster it gets!">Help mijn cyperse kat over de dozen en bloempotten te springen. Hoe langer je rent, hoe sneller het gaat!</p>
+  <div class="hud">
+    <div class="pill"><span data-en="Score">Score</span>: <span id="jScore">0</span></div>
+    <div class="pill"><span data-en="Best">Record</span>: <span id="jBest">0</span></div>
+  </div>
+  <div id="jumpStage">
+    <canvas id="jump" width="640" height="260"></canvas>
+    <div id="jumpOverlay">
+      <h2 id="jTitle" data-en="Ready to jump?">Klaar om te springen?</h2>
+      <p id="jText" data-en="Press space or the up arrow, or tap the screen to jump.&lt;br&gt;Hold longer to jump higher.">Druk op spatie of pijltje omhoog, of tik op het scherm om te springen.<br>Langer vasthouden = hoger springen.</p>
+      <button class="btn" id="jStart">Start</button>
+    </div>
+  </div>
+  <p class="hint" data-en="Space, up arrow or W, or tap the screen">Spatie, pijltje omhoog of W, of tik op het scherm</p>
 </main>
 
 <section class="cta">
@@ -144,6 +174,28 @@
       o.connect(g); g.connect(ac.destination);
       o.start(t0); o.stop(t0 + dur + 0.02);
     }
+    // Een gesynthetiseerde 'miauw': zaagtand door een filter, toonhoogte eerst omhoog en dan omlaag
+    function meow(mood) {
+      if (muted || !ctxOk()) return;
+      const P = { happy: [520, 860, 620, 0.42], sad: [640, 700, 360, 0.6], proud: [620, 1000, 720, 0.5] }[mood || 'happy'];
+      const t0 = ac.currentTime + 0.02, dur = P[3], peak = t0 + dur * 0.32;
+      const o = ac.createOscillator(), bp = ac.createBiquadFilter(), lp = ac.createBiquadFilter(), g = ac.createGain();
+      const lfo = ac.createOscillator(), lfoGain = ac.createGain();
+      o.type = 'sawtooth';
+      o.frequency.setValueAtTime(P[0], t0);
+      o.frequency.exponentialRampToValueAtTime(P[1], peak);
+      o.frequency.exponentialRampToValueAtTime(P[2], t0 + dur);
+      lfo.frequency.value = 7; lfoGain.gain.value = 14; lfo.connect(lfoGain); lfoGain.connect(o.frequency);
+      bp.type = 'bandpass'; bp.Q.value = 2.2;
+      bp.frequency.setValueAtTime(900, t0); bp.frequency.exponentialRampToValueAtTime(1800, peak); bp.frequency.exponentialRampToValueAtTime(850, t0 + dur);
+      lp.type = 'lowpass'; lp.frequency.value = 3200;
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(0.32, t0 + 0.05);
+      g.gain.setValueAtTime(0.32, t0 + dur * 0.6);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.connect(bp); bp.connect(lp); lp.connect(g); g.connect(ac.destination);
+      o.start(t0); lfo.start(t0); o.stop(t0 + dur + 0.05); lfo.stop(t0 + dur + 0.05);
+    }
     return {
       unlock: ctxOk,
       fish: function () { tone(880, 0.12, 'sine', 0.16); tone(1320, 0.14, 'sine', 0.1, 0.05); },
@@ -151,7 +203,11 @@
       bomb: function () { tone(160, 0.35, 'sawtooth', 0.2, 0, 40); tone(90, 0.4, 'square', 0.12, 0, 35); },
       miss: function () { tone(300, 0.18, 'sine', 0.1, 0, 180); },
       over: function () { [523, 392, 294].forEach((f, i) => tone(f, 0.28, 'triangle', 0.16, i * 0.2)); },
-      pop: function () { tone(520, 0.09, 'sine', 0.16, 0, 900); }
+      pop: function () { tone(520, 0.09, 'sine', 0.16, 0, 900); },
+      jump: function () { tone(380, 0.14, 'sine', 0.1, 0, 760); },
+      ding: function () { tone(1568, 0.18, 'triangle', 0.12); tone(2093, 0.24, 'triangle', 0.08, 0.07); },
+      crash: function () { tone(220, 0.25, 'sawtooth', 0.12, 0, 70); },
+      meow: meow
     };
   })();
 
@@ -515,6 +571,209 @@
     }, { passive: false });
 
     startBtn.addEventListener('click', () => { SFX.unlock(); reset(); running = true; overlay.classList.add('hide'); });
+
+    reset(); running = false;
+    requestAnimationFrame(loop);
+  })();
+  // ---------------- Springende kat ----------------
+  (function () {
+    const cv = document.getElementById('jump'), ctx = cv.getContext('2d');
+    const W = cv.width, H = cv.height, GROUND = 214;
+    const scoreEl = document.getElementById('jScore'), bestEl = document.getElementById('jBest');
+    const overlay = document.getElementById('jumpOverlay'), title = document.getElementById('jTitle'), text = document.getElementById('jText'), startBtn = document.getElementById('jStart');
+
+    let best = 0;
+    try { best = parseInt(localStorage.getItem('jumpBest') || '0', 10) || 0; } catch (e) {}
+    bestEl.textContent = best;
+
+    // De kat: dezelfde grijsbruine cyperse kat als op de homepage (tekening 200 x 120, geschaald)
+    const FUR = '#8a7d6e', DARK = '#3d342d', LIGHT = '#d3c8b8', FAR = '#6b5f53', PINK = '#e7a3a8';
+    const S = 0.5, CAT_X = 70;
+    const P = (d) => new Path2D(d);
+    const tailPath = P('M52 58 C34 54 22 38 30 16'), tailStripes = P('M44 55 l-3 -6 M34 46 l-5 -3 M29 34 l-6 0 M29 23 l-6 2');
+    const stripes = P('M64 46 q5 10 1 22 M78 43 q5 11 1 24 M92 42 q5 11 1 25 M106 42 q5 11 1 24 M120 44 q4 10 1 21');
+    const mMark = P('M143 37 l3 -7 l3 6 l3 -6 l3 7'), cheek = P('M134 46 l-6 1 M135 52 l-6 3');
+    const mouth = P('M173 53 q-2 4 -6 3'), whiskers = P('M168 55 l20 -4 M168 58 l20 2');
+    function poly(pts, fill) { ctx.beginPath(); ctx.moveTo(pts[0], pts[1]); for (let i = 2; i < pts.length; i += 2) ctx.lineTo(pts[i], pts[i + 1]); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); }
+    function ell(x, y, rx, ry, fill) { ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, 6.283); ctx.fillStyle = fill; ctx.fill(); }
+    function stroke(path, color, w) { ctx.strokeStyle = color; ctx.lineWidth = w; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke(path); }
+    function leg(x, ang, fill) {
+      ctx.save(); ctx.translate(x, 70); ctx.rotate(ang);
+      ctx.fillStyle = fill; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(-5, 0, 10, 32, 5) : ctx.rect(-5, 0, 10, 32); ctx.fill();
+      ctx.globalAlpha = 0.55; ctx.fillStyle = DARK; ctx.fillRect(-5, 10, 10, 3); ctx.globalAlpha = 1;
+      ell(0, 31, 7, 4, LIGHT);
+      ctx.restore();
+    }
+    function drawCat(x, y, phase, air, hurt) {
+      ctx.save(); ctx.translate(x, y); ctx.scale(S, S);
+      // staart
+      ctx.save(); ctx.translate(52, 58); ctx.rotate(Math.sin(phase * 0.6) * 0.22); ctx.translate(-52, -58);
+      stroke(tailPath, FUR, 10); stroke(tailStripes, DARK, 3.5); ell(30, 16, 5, 5, DARK);
+      ctx.restore();
+      const a = air ? 0 : Math.sin(phase) * 0.55;
+      const back = air ? 0.7 : a, front = air ? -0.7 : -a;
+      leg(70, back * -1, FAR); leg(126, front * -1, FAR);
+      ell(96, 64, 50, 22, FUR); ell(100, 76, 36, 9, LIGHT); stroke(stripes, DARK, 4.5);
+      leg(62, back, FUR); leg(134, front, FUR);
+      // kop
+      poly([134, 36, 138, 12, 152, 30], FUR); poly([138, 32, 140, 19, 148, 30], PINK);
+      poly([154, 30, 168, 12, 170, 38], FUR); poly([157, 30, 166, 19, 167, 34], PINK);
+      ell(152, 48, 21, 21, FUR); ell(146, 60, 9, 6, LIGHT); ell(164, 55, 10, 7.5, LIGHT);
+      stroke(mMark, DARK, 2.4); stroke(cheek, DARK, 2.4);
+      if (hurt) {
+        stroke(P('M156 40 l8 8 M164 40 l-8 8'), DARK, 2.6);
+      } else {
+        ell(160, 44, 4.6, 5.4, '#9cc25a'); ell(161, 44, 1.6, 4.2, '#1b1b1b'); ell(162, 42, 1.2, 1.2, '#fff');
+      }
+      poly([171, 50, 175, 50, 173, 53], PINK); stroke(mouth, DARK, 1.4); stroke(whiskers, '#f4f1ec', 1.2);
+      ctx.restore();
+    }
+
+    // Obstakels: dozen en bloempotten
+    const TYPES = [
+      { w: 34, h: 30, kind: 'box' }, { w: 34, h: 46, kind: 'box' }, { w: 62, h: 30, kind: 'box2' }, { w: 30, h: 40, kind: 'pot' }
+    ];
+    function drawObstacle(o) {
+      const x = o.x, y = GROUND - o.h;
+      if (o.kind === 'pot') {
+        ctx.fillStyle = '#4f9a54';
+        ctx.beginPath(); ctx.ellipse(x + 8, y + 6, 6, 12, -0.4, 0, 6.283); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(x + 22, y + 6, 6, 12, 0.4, 0, 6.283); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(x + 15, y + 2, 5, 13, 0, 0, 6.283); ctx.fill();
+        ctx.fillStyle = '#c8663b';
+        ctx.beginPath(); ctx.moveTo(x, y + 16); ctx.lineTo(x + o.w, y + 16); ctx.lineTo(x + o.w - 5, GROUND); ctx.lineTo(x + 5, GROUND); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#a9522c'; ctx.fillRect(x - 2, y + 14, o.w + 4, 7);
+        return;
+      }
+      const boxes = o.kind === 'box2' ? [[x, 30], [x + 32, 30]] : [[x, o.h]];
+      for (const [bx, bh] of boxes) {
+        const by = GROUND - bh, bw = o.kind === 'box2' ? 30 : o.w;
+        ctx.fillStyle = '#c99a62'; ctx.fillRect(bx, by, bw, bh);
+        ctx.fillStyle = '#b5874f'; ctx.fillRect(bx, by, bw, 5);
+        ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.fillRect(bx + bw / 2 - 3, by, 6, bh);
+        ctx.strokeStyle = '#8f6a3c'; ctx.lineWidth = 1.5; ctx.strokeRect(bx + 0.5, by + 0.5, bw - 1, bh - 1);
+      }
+    }
+
+    let obs, parts, score, shown, nextMilestone, speed, dist, nextGap, catY, vy, onGround, holding, running, dead, phase, banner;
+
+    function reset() {
+      obs = []; parts = []; score = 0; shown = -1; nextMilestone = 100; speed = 300; dist = 0; nextGap = 260;
+      catY = GROUND - 51; vy = 0; onGround = true; holding = false; dead = false; phase = 0; banner = null;
+      scoreEl.textContent = 0;
+    }
+
+    function jump() {
+      if (!running || !onGround) return;
+      vy = -720; onGround = false; SFX.jump();
+    }
+
+    function hit(o) {
+      // hitbox van de kat (iets kleiner dan de tekening, zodat het eerlijk voelt)
+      const cx = CAT_X + 14, cy = catY + 12, cw = 72, ch = 34;
+      const ox = o.x + 3, oy = GROUND - o.h + 3, ow = o.w - 6, oh = o.h - 3;
+      return cx < ox + ow && cx + cw > ox && cy < oy + oh && cy + ch > oy;
+    }
+
+    function end() {
+      running = false; dead = true;
+      SFX.crash();
+      const record = score > best;
+      if (record) { best = score; bestEl.textContent = best; try { localStorage.setItem('jumpBest', best); } catch (e) {} }
+      setTimeout(() => SFX.meow(record ? 'proud' : 'sad'), 180);
+      setText(title, record ? 'Nieuw record!' : 'Au!', record ? 'New record!' : 'Ouch!');
+      setText(text, 'Je score: <b>' + score + '</b><br>Record: <b>' + best + '</b>', 'Your score: <b>' + score + '</b><br>Best: <b>' + best + '</b>');
+      setText(startBtn, 'Opnieuw', 'Play again');
+      setTimeout(() => overlay.classList.remove('hide'), 450);
+    }
+
+    // achtergrond: lucht, wolken, heuvels en gras die met verschillende snelheid meeschuiven
+    function drawBg(t) {
+      const g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, '#ffe3cc'); g.addColorStop(0.6, '#fff4ea'); g.addColorStop(1, '#e8f4dc');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = 'rgba(255,190,140,0.55)'; ctx.beginPath(); ctx.arc(520, 62, 30, 0, 6.283); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      for (let i = 0; i < 3; i++) {
+        const cx = W - (((dist * 0.08) + i * 240) % (W + 140)) + 40, cy = 40 + i * 26;
+        ctx.beginPath(); ctx.ellipse(cx, cy, 40, 13, 0, 0, 6.283); ctx.ellipse(cx + 24, cy - 7, 26, 12, 0, 0, 6.283); ctx.fill();
+      }
+      ctx.fillStyle = '#cfe3b5';
+      ctx.beginPath(); ctx.moveTo(0, GROUND);
+      for (let x = 0; x <= W; x += 16) ctx.lineTo(x, GROUND - 34 - Math.sin((x + dist * 0.25) / 70) * 14);
+      ctx.lineTo(W, GROUND); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#9ccc7a'; ctx.fillRect(0, GROUND, W, H - GROUND);
+      ctx.fillStyle = '#86b866';
+      for (let x = -(dist % 40); x < W; x += 40) ctx.fillRect(x, GROUND + 14, 18, 3);
+      ctx.fillStyle = '#7aa95b'; ctx.fillRect(0, GROUND, W, 3);
+    }
+
+    let last = performance.now();
+    function loop(now) {
+      const dt = Math.min((now - last) / 1000, 0.05); last = now;
+      if (running) {
+        speed = Math.min(700, speed + dt * 7);
+        const dx = speed * dt;
+        dist += dx; phase += dt * speed / 26;
+        // springen: zwaartekracht, en korter vasthouden = lagere sprong
+        vy += 2200 * dt;
+        if (!holding && vy < -300) vy = -300;
+        catY += vy * dt;
+        if (catY >= GROUND - 51) {
+          if (!onGround) for (let i = 0; i < 6; i++) parts.push({ x: CAT_X + 40 + Math.random() * 30, y: GROUND, vx: -60 - Math.random() * 80, vy: -40 - Math.random() * 60, life: 0.4 });
+          catY = GROUND - 51; vy = 0; onGround = true;
+        }
+        // obstakels
+        nextGap -= dx;
+        if (nextGap <= 0) {
+          const ty = TYPES[Math.floor(Math.random() * (speed > 420 ? 4 : 3))];
+          obs.push({ x: W + 10, w: ty.w, h: ty.h, kind: ty.kind });
+          nextGap = speed * (0.75 + Math.random() * 0.7) + 160;
+        }
+        for (let i = obs.length - 1; i >= 0; i--) {
+          obs[i].x -= dx;
+          if (obs[i].x < -80) obs.splice(i, 1);
+        }
+        score = Math.floor(dist / 10);
+        if (score !== shown) { shown = score; scoreEl.textContent = score; }
+        if (score >= nextMilestone) { SFX.ding(); banner = { n: nextMilestone, t: 1.2 }; nextMilestone += 100; }
+        for (const o of obs) if (hit(o)) { end(); break; }
+      }
+      drawBg(now);
+      for (const o of obs) drawObstacle(o);
+      for (let i = parts.length - 1; i >= 0; i--) {
+        const p = parts[i]; p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 300 * dt;
+        if (p.life <= 0) { parts.splice(i, 1); continue; }
+        ctx.globalAlpha = p.life / 0.4; ctx.fillStyle = '#c9b79c'; ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, 6.283); ctx.fill(); ctx.globalAlpha = 1;
+      }
+      drawCat(CAT_X, catY, running ? phase : 0, !onGround, dead);
+      if (banner) {
+        banner.t -= dt;
+        if (banner.t <= 0) banner = null;
+        else {
+          ctx.globalAlpha = Math.min(1, banner.t * 2); ctx.fillStyle = '#d4521f';
+          ctx.font = 'bold 28px -apple-system, "Helvetica Neue", sans-serif'; ctx.textAlign = 'center';
+          ctx.fillText(banner.n + '!', W / 2, 70 - (1.2 - banner.t) * 20); ctx.globalAlpha = 1;
+        }
+      }
+      requestAnimationFrame(loop);
+    }
+
+    function press(e) { if (!running) return; holding = true; jump(); if (e) e.preventDefault(); }
+    function release() { holding = false; }
+    window.addEventListener('keydown', (e) => {
+      if (!running) return;
+      if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') { if (!e.repeat) press(); e.preventDefault(); }
+    });
+    window.addEventListener('keyup', (e) => { if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') release(); });
+    cv.addEventListener('pointerdown', press);
+    window.addEventListener('pointerup', release);
+
+    startBtn.addEventListener('click', () => {
+      SFX.unlock(); reset(); running = true; overlay.classList.add('hide');
+      SFX.meow('happy');
+      startBtn.blur();
+    });
 
     reset(); running = false;
     requestAnimationFrame(loop);
