@@ -61,7 +61,10 @@
   html.night .tag { background: #1c1c1e; color: #f5f5f7; box-shadow: 0 6px 24px rgba(0,0,0,0.5); }
   html.night .cursor { background: #a1a1a6; }
   /* Easter egg: een rennende grijsbruine cyperse kat */
-  .egg-hint { text-align: center; color: #a1a1a6; font-size: 13px; margin-top: -10px; }
+  .egg-hint { margin: -22px 0 32px; color: #6e6e73; font-size: 15px; font-weight: 500; }
+  .egg-hint .paw { display: inline-block; animation: pawWiggle 2.4s ease-in-out infinite; }
+  @keyframes pawWiggle { 0%,70%,100% { transform: rotate(0); } 78% { transform: rotate(-16deg); } 86% { transform: rotate(14deg); } 94% { transform: rotate(-6deg); } }
+  html.night .egg-hint { color: #a1a1a6; }
   .tilt-card { cursor: pointer; }
   #tabby { position: fixed; left: 0; bottom: 6px; width: 200px; height: 120px; z-index: 30; pointer-events: none;
            animation: tabbyRun 3.4s linear forwards; }
@@ -107,6 +110,7 @@
       <div class="shine"></div>
     </div>
   </div>
+  <p class="egg-hint reveal"><span class="paw">&#128062;</span> <span data-en="Psst&hellip; click my photo three times!">Psst&hellip; klik drie keer op mijn foto!</span></p>
   <h2 class="reveal" data-en="About me">Over mij</h2>
   <p class="text reveal" data-en="I&#x27;m Peter, a cheerful and positive person with a real passion for my work. Hard work doesn&#x27;t scare me, and I love learning new things. I live in Delfzijl, a small port town in Groningen.">Ik ben Peter, een vrolijk en positief mens met een grote passie voor mijn werk. Hard werken schrikt me niet af, en ik leer graag nieuwe dingen. Ik woon in Delfzijl, een kleine havenstad in Groningen.</p>
 </section>
@@ -140,8 +144,6 @@
   <a class="btn reveal" href="mailto:your@email.com" data-en="Send me an email">Stuur me een e-mail</a>
   <a class="more reveal" href="game.html" data-en="Or take a quick break and play a game &amp;rarr;">Of speel eerst even een spelletje &rarr;</a>
 </section>
-
-<p class="egg-hint" data-en="Psst&hellip; click my photo three times.">Psst&hellip; klik drie keer op mijn foto.</p>
 
 <footer data-en="© 2026 Peter. All rights reserved.">© 2026 Peter. Alle rechten voorbehouden.</footer>
 
